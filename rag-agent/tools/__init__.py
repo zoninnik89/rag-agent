@@ -26,4 +26,5 @@ __all__ = [
     "check_corpus_exists",
     "get_corpus_resource_name",
     "set_current_corpus",
+    "query_cloudsql"
 ]

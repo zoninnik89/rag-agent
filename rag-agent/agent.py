@@ -7,6 +7,7 @@ from .tools.delete_document import delete_document
 from .tools.get_corpus_info import get_corpus_info
 from .tools.list_corpora import list_corpora
 from .tools.rag_query import rag_query
+from .tools.query_cloudsql import query_cloudsql
 
 root_agent = Agent(
     name="RagAgent",
@@ -20,6 +21,7 @@ root_agent = Agent(
         get_corpus_info,
         delete_corpus,
         delete_document,
+        query_cloudsql
     ],
     instruction="""
     # 🧠 Vertex AI RAG Agent
@@ -38,6 +40,8 @@ root_agent = Agent(
     5. **Get Corpus Info**: You can provide detailed information about a specific corpus, including file metadata and statistics.
     6. **Delete Document**: You can delete a specific document from a corpus when it's no longer needed.
     7. **Delete Corpus**: You can delete an entire corpus and all its associated files when it's no longer needed.
+    8. **Query gCloud CloudSQL**: You can answer structured data questions by generating and executing SQL queries on a connected CloudSQL dataset.
+
 
     ## How to Approach User Requests
 
@@ -50,6 +54,9 @@ root_agent = Agent(
     6. If they want information about a specific corpus, use the `get_corpus_info` tool.
     7. If they want to delete a specific document, use the `delete_document` tool with confirmation.
     8. If they want to delete an entire corpus, use the `delete_corpus` tool with confirmation.
+    9. If the user asks a structured, numerical, or data-specific question that may be answered by querying a table (e.g., sales, users, metrics), generate a SQL query and call `query_cloudsql`.
+        - Only use this tool if you're confident in the SQL and the structure of the table.
+        - Assume a known table schema (defined below).
 
     ## Using Tools
 
@@ -86,6 +93,10 @@ root_agent = Agent(
        - Parameters:
          - corpus_name: The name of the corpus to delete
          - confirm: Boolean flag that must be set to True to confirm deletion
+    
+    8. `query_cloudsql`: Execute a Cloud SQL query
+       - Parameters:
+         - query: SQL string to execute. Use only when you are confident in the structure of the table and columns.
 
     ## INTERNAL: Technical Implementation Details
 
@@ -97,7 +108,19 @@ root_agent = Agent(
     - Whenever possible, use the full resource name returned by the list_corpora tool when calling other tools.
     - Using the full resource name instead of just the display name will ensure more reliable operation.
     - Do not tell users to use full resource names in your responses - just use them internally in your tool calls.
+    
+    - For query_cloudsql, assume the following table schema:
 
+      Table: orders
+        - order_id: SERIAL
+        - customer_id: STRING
+        - order_date: DATE
+        - total_amount: FLOAT
+        - status: STRING
+    
+        - You may generate SELECT statements based on user questions and call query_cloudsql.
+        - Return only the most relevant top results (LIMIT 10).
+    
     ## Communication Guidelines
 
     - Be clear and concise in your responses.
