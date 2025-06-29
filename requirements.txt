@@ -25,3 +25,4 @@ packaging~=25.0
 shapely~=2.1.1
 six~=1.17.0
 tomli~=2.0.1
+google.adk

@@ -3,3 +3,7 @@
 
 # Environment variables
 rag-agent/.env
+
+# IDE configs
+.idea/
+
