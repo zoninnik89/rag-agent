@@ -16,7 +16,7 @@ DB_URI = (
 
 def query_cloudsql(query: str, tool_context: ToolContext) -> str:
     """
-    Execute a SQL query (SELECT, INSERT, DELETE) on Cloud SQL using direct connection,
+    Execute a SQL query (SELECT, INSERT, UPDATE, DELETE) on Cloud SQL using direct connection,
     and save the query and result in tool_context.state, then return the result as markdown.
 
     Args:
