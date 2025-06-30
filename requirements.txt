@@ -30,3 +30,4 @@ pandas~=2.3.0
 sqlalchemy~=2.0.41
 pg8000
 tabulate
+psycopg2-binary
